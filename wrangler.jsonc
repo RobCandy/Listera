@@ -1,0 +1,13 @@
+{
+  "name": "listera",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "kv_namespaces": [
+    { "binding": "LIMITS", "id": "97949adaa1e5460ba9e767257356c830" }
+  ]
+}

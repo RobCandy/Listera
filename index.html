@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Listera - annunci Vinted da una foto</title>
+<meta name="description" content="Carica una foto, controlla i dati e copia un annuncio Vinted scritto come lo scriveresti tu.">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#14171f;--mut:#5b6472;--line:#e2e5ea;--ac:#0e7c6b;--acbg:#e3f3ef;--warn:#fff4dc;--warnt:#7a5200;--err:#b3261e}
+@media(prefers-color-scheme:dark){:root{--bg:#101318;--card:#181c23;--ink:#eef0f3;--mut:#9aa3b1;--line:#2a303a;--ac:#4fc3ad;--acbg:#173630;--warn:#3a2f12;--warnt:#f0cf85;--err:#ff8a80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:980px;margin:0 auto;padding:16px}
+header{display:flex;justify-content:space-between;align-items:center;padding:4px 0 20px}
+.logo{font-weight:600;font-size:18px;letter-spacing:-.01em}
+h1{font-size:28px;line-height:1.2;margin:0 0 6px;font-weight:600;letter-spacing:-.02em}
+.sub{color:var(--mut);margin:0 0 20px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
+.c{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+label{display:block;font-size:12px;color:var(--mut);margin:0 0 3px}
+input,textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+input:focus,textarea:focus,button:focus-visible,.chip:focus-visible,.drop:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+textarea{resize:vertical;min-height:70px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.drop{border:1.5px dashed var(--line);border-radius:10px;padding:18px;text-align:center;cursor:pointer;margin-bottom:10px;color:var(--mut)}
+.drop:hover{border-color:var(--ac)}
+.th{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.th div{position:relative;width:64px;height:64px}
+.th img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.th button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;padding:0;border-radius:50%;line-height:1;font-size:12px}
+.chip{display:inline-block;font-size:13px;padding:5px 11px;border:1px solid var(--line);border-radius:20px;margin:0 5px 6px 0;cursor:pointer;color:var(--mut);background:none}
+.chip.on{background:var(--acbg);color:var(--ac);border-color:var(--ac)}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 14px}
+button:hover{border-color:var(--mut)}
+.pri{width:100%;background:var(--ink);color:var(--card);border-color:var(--ink);font-weight:600;padding:11px}
+.pri[disabled]{opacity:.6;cursor:wait}
+.bar{display:flex;gap:8px;margin:12px 0}
+.bar button{flex:1}
+.tt{font-weight:600;font-size:17px;margin:0 0 10px}
+.tag{display:inline-block;font-size:13px;padding:2px 9px;border-radius:20px;background:var(--acbg);color:var(--ac);margin:0 4px 4px 0}
+.mut{color:var(--mut);font-size:13px}
+.nt{background:var(--warn);color:var(--warnt);font-size:13px;padding:9px 11px;border-radius:8px;margin:10px 0}
+.err{color:var(--err);font-size:13px;margin:8px 0 0;min-height:18px}
+ul.s{margin:4px 0 10px;padding-left:18px;font-size:13px}
+.hr{border-top:1px solid var(--line);margin:12px 0;padding-top:12px}
+.m3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ban{margin-top:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;border-color:var(--ac)}
+.ban p{margin:0}
+.lg button{padding:4px 10px;font-size:13px}
+.lg button.on{background:var(--ink);color:var(--card)}
+footer{margin:20px 0 8px;font-size:12px;color:var(--mut);text-align:center}
+[hidden]{display:none!important}
+@media(max-width:420px){h1{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="w">
+<header><span class="logo">Listera</span><span class="lg"><button data-l="it" class="on">IT</button> <button data-l="en">EN</button></span></header>
+<h1 data-i="h1"></h1>
+<p class="sub" data-i="sub"></p>
+
+<div class="g">
+<section class="c" aria-label="Dati articolo">
+<div class="drop" id="drop" tabindex="0" role="button"><b data-i="drop"></b><br><span class="mut" data-i="dropSub"></span></div>
+<input type="file" id="file" accept="image/*" multiple hidden>
+<div class="th" id="th"></div>
+<div class="r2"><div><label data-i="f_tipo"></label><input id="tipo"></div><div><label data-i="f_marca"></label><input id="marca"></div></div>
+<div class="r2"><div><label data-i="f_misure"></label><input id="misure"></div><div><label data-i="f_colore"></label><input id="colore"></div></div>
+<label data-i="f_cond"></label>
+<div id="cond" role="group"></div>
+<div class="r2"><div><label data-i="f_mat"></label><input id="materiale"></div><div><label data-i="f_dif"></label><input id="difetti"></div></div>
+<div style="margin-bottom:10px"><label data-i="f_note"></label><input id="note"></div>
+<details style="margin-bottom:12px"><summary class="mut" style="cursor:pointer" data-i="f_style"></summary><textarea id="style" style="margin-top:6px"></textarea><span class="mut" data-i="f_styleHint"></span></details>
+<div class="r2"><div><label data-i="f_lang"></label><select id="lang"><option value="auto">Auto</option><option value="it">Italiano</option><option value="en">English</option></select></div><div></div></div>
+<button class="pri" id="gen"></button>
+<p class="err" id="err" role="alert"></p>
+</section>
+
+<section class="c" aria-live="polite">
+<div id="empty" class="mut" data-i="empty"></div>
+<div id="res" hidden>
+<div class="mut" style="display:flex;justify-content:space-between"><span data-i="r_title"></span><span id="left"></span></div>
+<p class="tt" id="rt"></p>
+<div class="mut" data-i="r_desc"></div>
+<p id="rd" style="margin:2px 0 10px;white-space:pre-wrap"></p>
+<div id="rh" style="margin-bottom:6px"></div>
+<div class="bar"><button id="cp"></button><button id="rg"></button></div>
+<div id="extra"></div>
+<div class="nt" data-i="dup"></div>
+<div class="hr"><div class="mut" data-i="m_h"></div>
+<div class="m3"><div><label data-i="m_buy"></label><input id="ma" type="number" min="0" step="0.01" value="0"></div><div><label data-i="m_ship"></label><input id="ms" type="number" min="0" step="0.01" value="0"></div><div><label data-i="m_sell"></label><input id="mp" type="number" min="0" step="0.01" value="0"></div></div>
+<p style="margin:8px 0 0;font-weight:600"><span data-i="m_left"></span> <span id="mr">0</span> &euro;</p></div>
+</div>
+</section>
+</div>
+
+<section class="c ban">
+<div><p style="font-weight:600" data-i="b_h"></p><p class="mut" data-i="b_t"></p><p class="mut" data-i="b_s"></p></div>
+<button disabled data-i="b_btn"></button>
+</section>
+<footer data-i="foot"></footer>
+</div>
+
+<script>
+const T={
+it:{h1:"Annunci Vinted che suonano come te",sub:"Carica una foto, controlla i dati e copia il testo. Senza carta e senza account.",drop:"Carica le foto",dropSub:"Fino a 4 foto. Vengono ridimensionate prima dell'invio.",f_tipo:"Tipo di articolo",f_marca:"Marca o modello",f_misure:"Misure o taglia",f_colore:"Colore",f_cond:"Condizione",f_mat:"Materiale",f_dif:"Difetti da dichiarare",f_note:"Funzionamento, batterie, cosa è incluso",f_style:"Scrivi come te (facoltativo)",f_styleHint:"Incolla 1-3 tuoi annunci vecchi, separati da una riga vuota.",f_lang:"Lingua dell'annuncio",gen:"Genera annuncio",wait:"Sto scrivendo…",empty:"Qui apparirà il tuo annuncio. Più dati inserisci, meno parti restano da completare.",r_title:"Titolo",r_desc:"Descrizione",cp:"Copia tutto",rg:"Rigenera",copied:"Copiato",left:"Generazioni rimaste oggi: ",dup:"Vinted non accetta annunci già pubblicati: carica foto nuove o cambia prospettiva. Cambiare solo il testo può non bastare.",m_h:"Quanto ti resta",m_buy:"Acquisto €",m_ship:"Spedizione €",m_sell:"Vendita €",m_left:"Ti restano",x_miss:"Da completare",x_q:"Da chiarire",x_ph:"Consigli per le foto",x_b:"Sembra un lotto: il testo è scritto come bundle.",b_h:"Fai crescere il tuo negozio Vinted",b_t:"Presto: account gratuito per salvare storico e stile personale, e annunci in serie.",b_s:"Nessuna carta. Non accediamo al tuo account Vinted. Cancelli i dati quando vuoi.",b_btn:"Account in arrivo",foot:"Listera non è affiliato a Vinted. Le foto vengono inviate a un servizio AI per generare il testo.",
+e_need:"Aggiungi almeno una foto o il tipo di articolo.",e_limit:"Hai finito le generazioni di oggi. Torna domani.",e_busy:"Il servizio è occupato. Riprova tra un minuto.",e_ai:"Non sono riuscito a generare l'annuncio. Riprova.",e_cfg:"Il servizio non è configurato.",e_img:"Non riesco a leggere questa foto. Prova un JPG o PNG.",cond:["Nuovo con cartellino","Nuovo senza cartellino","Ottime condizioni","Buone condizioni","Soddisfacenti"]},
+en:{h1:"Vinted listings that sound like you",sub:"Upload a photo, check the details and copy the text. No card, no account.",drop:"Upload photos",dropSub:"Up to 4 photos. They are resized before sending.",f_tipo:"Item type",f_marca:"Brand or model",f_misure:"Size or measurements",f_colore:"Colour",f_cond:"Condition",f_mat:"Material",f_dif:"Flaws to disclose",f_note:"How it works, batteries, what's included",f_style:"Write like me (optional)",f_styleHint:"Paste 1-3 of your old listings, separated by a blank line.",f_lang:"Listing language",gen:"Generate listing",wait:"Writing…",empty:"Your listing will appear here. The more details you add, the fewer gaps are left.",r_title:"Title",r_desc:"Description",cp:"Copy all",rg:"Regenerate",copied:"Copied",left:"Generations left today: ",dup:"Vinted rejects listings that were already published: upload new photos or change the angle. Changing only the text may not be enough.",m_h:"What you keep",m_buy:"Cost €",m_ship:"Shipping €",m_sell:"Sale price €",m_left:"You keep",x_miss:"To complete",x_q:"To clarify",x_ph:"Photo tips",x_b:"This looks like a lot: the text is written as a bundle.",b_h:"Grow your Vinted shop",b_t:"Coming soon: a free account to save history and your personal style, plus batch listings.",b_s:"No card. We never access your Vinted account. Delete your data anytime.",b_btn:"Account coming soon",foot:"Listera is not affiliated with Vinted. Photos are sent to an AI service to write the text.",
+e_need:"Add at least one photo or the item type.",e_limit:"You've used today's generations. Come back tomorrow.",e_busy:"The service is busy. Try again in a minute.",e_ai:"Couldn't generate the listing. Try again.",e_cfg:"The service isn't configured.",e_img:"Can't read this photo. Try a JPG or PNG.",cond:["New with tags","New without tags","Very good","Good","Satisfactory"]}};
+const CV=["Nuovo con cartellino","Nuovo senza cartellino","Ottime condizioni","Buone condizioni","Soddisfacenti"];
+let L=(navigator.language||'it').startsWith('en')?'en':'it',images=[],cond='',last=null,prev='';
+const $=id=>document.getElementById(id),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+function ui(){document.documentElement.lang=L;document.querySelectorAll('[data-i]').forEach(n=>n.textContent=T[L][n.dataset.i]);
+$('gen').textContent=T[L].gen;$('cp').textContent=T[L].cp;$('rg').textContent=T[L].rg;
+document.querySelectorAll('.lg button').forEach(b=>b.classList.toggle('on',b.dataset.l===L));
+const c=$('cond');c.textContent='';CV.forEach((v,i)=>{const b=el('button','chip'+(cond===v?' on':''),T[L].cond[i]);b.type='button';b.onclick=()=>{cond=cond===v?'':v;ui()};c.appendChild(b)});
+if(last)show(last)}
+document.querySelectorAll('.lg button').forEach(b=>b.onclick=()=>{L=b.dataset.l;ui()});
+function shrink(f){return new Promise((ok,ko)=>{const im=new Image();im.onload=()=>{const s=Math.min(1,1024/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(im.src);ok(c.toDataURL('image/jpeg',.8))};im.onerror=ko;im.src=URL.createObjectURL(f)})}
+function thumbs(){const t=$('th');t.textContent='';images.forEach((d,i)=>{const w=el('div'),im=el('img'),x=el('button',null,'×');im.src=d;im.alt='';x.type='button';x.setAttribute('aria-label','Remove');x.onclick=()=>{images.splice(i,1);thumbs()};w.append(im,x);t.appendChild(w)})}
+$('drop').onclick=()=>$('file').click();$('drop').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('file').click()}};
+$('file').onchange=async e=>{$('err').textContent='';for(const f of [...e.target.files]){if(images.length>=4)break;try{images.push(await shrink(f))}catch{$('err').textContent=T[L].e_img}}e.target.value='';thumbs()};
+function fields(){const o={};['tipo','marca','misure','colore','materiale','difetti','note'].forEach(k=>{const v=$(k).value.trim();if(v)o[k]=v});if(cond)o.condizione=cond;return o}
+async function run(regen){const b=$('gen'),f=fields();$('err').textContent='';if(!images.length&&!f.tipo){$('err').textContent=T[L].e_need;return}
+b.disabled=true;b.textContent=T[L].wait;
+try{const r=await fetch('/api/generate',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({images,fields:f,lang:$('lang').value,style:$('style').value.split(/\n\s*\n/).filter(s=>s.trim()),previous:regen?prev:''})});
+const d=await r.json();if(!r.ok){$('err').textContent=T[L]['e_'+({need_input:'need',limit:'limit',busy:'busy',config:'cfg'}[d.error]||'ai')];return}
+last=d;prev=d.titolo;show(d)}catch{$('err').textContent=T[L].e_ai}finally{b.disabled=false;b.textContent=T[L].gen}}
+function block(t,items){if(!items.length)return null;const w=el('div'),h=el('div','mut',t),u=el('ul','s');items.forEach(x=>u.appendChild(el('li',null,x)));w.append(h,u);return w}
+function show(d){$('empty').hidden=true;$('res').hidden=false;$('rt').textContent=d.titolo;$('rd').textContent=d.descrizione;
+$('left').textContent=T[L].left+d.left;const h=$('rh');h.textContent='';d.hashtag.forEach(x=>h.appendChild(el('span','tag',x)));
+const x=$('extra');x.textContent='';[block(T[L].x_miss,d.dati_mancanti),block(T[L].x_q,d.domande_utente),block(T[L].x_ph,d.consigli_foto)].forEach(n=>n&&x.appendChild(n));if(d.bundle)x.appendChild(el('p','mut',T[L].x_b))}
+$('gen').onclick=()=>run(false);$('rg').onclick=()=>run(true);
+$('cp').onclick=async()=>{if(!last)return;const t=last.titolo+'\n\n'+last.descrizione+'\n\n'+last.hashtag.join(' ');try{await navigator.clipboard.writeText(t)}catch{}const b=$('cp');b.textContent=T[L].copied;setTimeout(()=>b.textContent=T[L].cp,1500)};
+function calc(){const v=id=>parseFloat($(id).value)||0;$('mr').textContent=(Math.round((v('mp')-v('ma')-v('ms'))*100)/100).toString().replace('.',L==='it'?',':'.')}
+['ma','ms','mp'].forEach(i=>$(i).oninput=calc);
+ui();calc();
+</script>
+</body>
+</html>
